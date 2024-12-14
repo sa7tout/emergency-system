@@ -23,7 +23,7 @@ spring:
 server:
   port: 8095
   servlet:
-    context-path: /emergency/api
+    context-path: /emergency/api/v1
 
 springdoc:
   swagger-ui:
