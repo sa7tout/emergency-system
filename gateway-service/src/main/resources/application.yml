@@ -1,0 +1,78 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: auth-swagger
+          uri: http://${AUTH_SERVICE_HOST:auth-service}:8091
+          predicates:
+            - Path=/emergency/api/v1/auth/swagger-ui/**,/emergency/api/v1/auth/v3/api-docs/**
+
+        - id: ambulance-swagger
+          uri: http://${AMBULANCE_SERVICE_HOST:ambulance-service}:8092
+          predicates:
+            - Path=/emergency/api/v1/ambulance/swagger-ui/**,/emergency/api/v1/ambulance/v3/api-docs/**
+
+        - id: emergency-swagger
+          uri: http://${EMERGENCY_SERVICE_HOST:emergency-service}:8093
+          predicates:
+            - Path=/emergency/api/v1/emergency-case/swagger-ui/**,/emergency/api/v1/emergency-case/v3/api-docs/**
+
+        - id: hospital-swagger
+          uri: http://${HOSPITAL_SERVICE_HOST:hospital-service}:8094
+          predicates:
+            - Path=/emergency/api/v1/hospital/swagger-ui/**,/emergency/api/v1/hospital/v3/api-docs/**
+
+        - id: route-swagger
+          uri: http://${ROUTE_SERVICE_HOST:route-service}:8095
+          predicates:
+            - Path=/emergency/api/v1/route/swagger-ui/**,/emergency/api/v1/route/v3/api-docs/**
+
+        - id: auth-service
+          uri: http://${AUTH_SERVICE_HOST:auth-service}:8091
+          predicates:
+            - Path=/emergency/api/v1/auth/**
+
+        - id: ambulance-service
+          uri: http://${AMBULANCE_SERVICE_HOST:ambulance-service}:8092
+          predicates:
+            - Path=/emergency/api/v1/ambulances/**
+
+        - id: emergency-service
+          uri: http://${EMERGENCY_SERVICE_HOST:emergency-service}:8093
+          predicates:
+            - Path=/emergency/api/v1/emergencies/**
+
+        - id: hospital-service
+          uri: http://${HOSPITAL_SERVICE_HOST:hospital-service}:8094
+          predicates:
+            - Path=/emergency/api/v1/hospitals/**
+
+        - id: route-service
+          uri: http://${ROUTE_SERVICE_HOST:route-service}:8095
+          predicates:
+            - Path=/emergency/api/v1/routes/**
+
+springdoc:
+  swagger-ui:
+    path: /emergency/swagger-ui.html
+    urls:
+      - name: Auth Service
+        url: /emergency/api/v1/auth/v3/api-docs
+      - name: Ambulance Service
+        url: /emergency/api/v1/ambulance/v3/api-docs
+      - name: Emergency Service
+        url: /emergency/api/v1/emergency-case/v3/api-docs
+      - name: Hospital Service
+        url: /emergency/api/v1/hospital/v3/api-docs
+      - name: Route Service
+        url: /emergency/api/v1/route/v3/api-docs
+  api-docs:
+    enabled: true

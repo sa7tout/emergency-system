@@ -1,0 +1,29 @@
+jwt:
+  secret: ${JWT_SECRET:TKd2EpYKGzWKgcCfLLTUXrDUAffpvhrUzQYNbqBpEBsFUZqH9kYXEgDnNqtWSr5kA}
+  expiration: 86400000
+
+spring:
+  application:
+    name: hospital-service
+  datasource:
+    url: jdbc:postgresql://${SPRING_DATASOURCE_HOST:postgres}:5432/${SPRING_DATASOURCE_DB:emergency_db}
+    username: ${SPRING_DATASOURCE_USERNAME:admin}
+    password: ${SPRING_DATASOURCE_PASSWORD:admin911}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8094
+  servlet:
+    context-path: /emergency/api/v1
+
+springdoc:
+  swagger-ui:
+    path: /hospital/swagger-ui.html
+    url: /hospital/v3/api-docs
+  api-docs:
+    path: /hospital/v3/api-docs

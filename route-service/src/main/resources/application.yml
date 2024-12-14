@@ -1,0 +1,37 @@
+jwt:
+  secret: ${JWT_SECRET:TKd2EpYKGzWKgcCfLLTUXrDUAffpvhrUzQYNbqBpEBsFUZqH9kYXEgDnNqtWSr5kA}
+  expiration: 86400000
+
+spring:
+  application:
+    name: route-service
+  datasource:
+    url: jdbc:postgresql://${SPRING_DATASOURCE_HOST:postgres}:5432/${SPRING_DATASOURCE_DB:emergency_db}
+    username: ${SPRING_DATASOURCE_USERNAME:admin}
+    password: ${SPRING_DATASOURCE_PASSWORD:admin911}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    repair-on-migrate: true
+    baseline-on-migrate: true
+    validate-on-migrate: false
+
+server:
+  port: 8095
+  servlet:
+    context-path: /emergency/api
+
+springdoc:
+  swagger-ui:
+    path: /route/swagger-ui.html
+    url: /route/v3/api-docs
+  api-docs:
+    path: /route/v3/api-docs
+
+logging:
+  level:
+    com.ambulance: DEBUG

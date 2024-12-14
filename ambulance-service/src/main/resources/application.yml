@@ -1,0 +1,39 @@
+jwt:
+  secret: ${JWT_SECRET:TKd2EpYKGzWKgcCfLLTUXrDUAffpvhrUzQYNbqBpEBsFUZqH9kYXEgDnNqtWSr5kA}
+  expiration: 86400000
+
+spring:
+  application:
+    name: ambulance-service
+  datasource:
+    url: jdbc:postgresql://${SPRING_DATASOURCE_HOST:postgres}:5432/${SPRING_DATASOURCE_DB:emergency_db}
+    username: ${SPRING_DATASOURCE_USERNAME:admin}
+    password: ${SPRING_DATASOURCE_PASSWORD:admin911}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+influxdb:
+  url: ${INFLUXDB_URL:http://localhost:8086}
+  username: ${INFLUXDB_USERNAME:admin}
+  password: ${INFLUXDB_PASSWORD:admin911}
+  database: ambulance_tracking
+
+server:
+  port: 8092
+  servlet:
+    context-path: /emergency/api/v1
+
+springdoc:
+  swagger-ui:
+    path: /ambulance/swagger-ui.html
+    url: /ambulance/v3/api-docs
+  api-docs:
+    path: /ambulance/v3/api-docs
+
+logging:
+  level:
+    com.ambulance: DEBUG

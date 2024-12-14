@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:postgresql://${SPRING_DATASOURCE_HOST:localhost}:5432/${SPRING_DATASOURCE_DB:emergency_db}?currentSchema=public
+    username: ${SPRING_DATASOURCE_USERNAME:admin}
+    password: ${SPRING_DATASOURCE_PASSWORD:admin911}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    baseline-on-migrate: true
+    validate-on-migration: false
+    out-of-order: true
+    repair-on-migrate: true
+    schemas: public
+    locations: classpath:db/migration
+
+server:
+  port: 8091
+  servlet:
+    context-path: /emergency/api/v1
+
+jwt:
+  secret: ${JWT_SECRET:TKd2EpYKGzWKgcCfLLTUXrDUAffpvhrUzQYNbqBpEBsFUZqH9kYXEgDnNqtWSr5kA}
+  expiration: ${JWT_EXPIRATION:86400000}
+
+springdoc:
+  swagger-ui:
+    path: /auth/swagger-ui.html
+    url: /auth/v3/api-docs
+  api-docs:
+    path: /auth/v3/api-docs
+
+logging:
+  level:
+    com.ambulance: DEBUG
+    org.springframework.security: DEBUG
