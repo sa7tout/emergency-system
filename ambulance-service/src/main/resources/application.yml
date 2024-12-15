@@ -30,9 +30,9 @@ server:
 springdoc:
   swagger-ui:
     path: /ambulance/swagger-ui.html
-    url: /ambulance/v3/api-docs
+    url: /ambulance/api-docs
   api-docs:
-    path: /ambulance/v3/api-docs
+    path: /ambulance/api-docs
 
 logging:
   level:

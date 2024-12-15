@@ -24,6 +24,6 @@ server:
 springdoc:
   swagger-ui:
     path: /hospital/swagger-ui.html
-    url: /hospital/v3/api-docs
+    url: /hospital/api-docs
   api-docs:
-    path: /hospital/v3/api-docs
+    path: /hospital/api-docs

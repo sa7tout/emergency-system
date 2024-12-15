@@ -24,9 +24,9 @@ spring:
 springdoc:
   swagger-ui:
     path: /emergency-case/swagger-ui.html
-    url: /emergency-case/v3/api-docs
+    url: /emergency-case/api-docs
   api-docs:
-    path: /emergency-case/v3/api-docs
+    path: /emergency-case/api-docs
 
 server:
   port: 8093

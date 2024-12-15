@@ -28,9 +28,9 @@ server:
 springdoc:
   swagger-ui:
     path: /route/swagger-ui.html
-    url: /route/v3/api-docs
+    url: /route/api-docs
   api-docs:
-    path: /route/v3/api-docs
+    path: /route/api-docs
 
 logging:
   level:

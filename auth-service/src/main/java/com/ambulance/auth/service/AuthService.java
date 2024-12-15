@@ -66,10 +66,11 @@ public class AuthService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public EmployeeResponse registerEmployee(EmployeeRegistrationRequest request, String adminUsername) {
+        // Verify if admin exists
         User admin = userRepository.findByUsername(adminUsername)
                 .orElseThrow(() -> new BusinessException("Admin not found", "ADMIN_NOT_FOUND"));
 
-        if(employeeRepository.existsByEmployeeId(request.getEmployeeId())) {
+        if (employeeRepository.existsByEmployeeId(request.getEmployeeId())) {
             throw new BusinessException("Employee ID already exists", "EMPLOYEE_EXISTS");
         }
 
@@ -84,6 +85,7 @@ public class AuthService {
 
         return mapToEmployeeResponse(employee);
     }
+
 
     private EmployeeResponse mapToEmployeeResponse(Employee employee) {
         return EmployeeResponse.builder()
