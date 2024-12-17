@@ -24,7 +24,7 @@ export class AmbulanceService {
 
   // Ambulance endpoints
   getAllAmbulances() {
-    return this.apiService.get<AmbulanceResponse[]>('ambulance', '/api/ambulances');
+    return this.apiService.get<ApiResponse<AmbulanceResponse[]>>('ambulance', '/api/ambulances');
   }
 
   getActiveAmbulances() {

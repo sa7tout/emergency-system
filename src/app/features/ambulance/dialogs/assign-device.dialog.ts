@@ -13,63 +13,60 @@ import { AmbulanceService } from '../ambulance.service';
   imports: [CommonModule, MaterialModule, ReactiveFormsModule],
   template: `
     <h2 mat-dialog-title>Assign Device to Driver</h2>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <mat-dialog-content class="mat-typography p-4">
-        <div class="row mb-4">
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Device ID</mat-label>
-            <input matInput [value]="data.deviceId" readonly>
-          </mat-form-field>
-        </div>
+    <mat-dialog-content>
+      <form [formGroup]="form">
+        <mat-form-field>
+          <mat-label>Select Device</mat-label>
+          <mat-select formControlName="deviceId" required>
+            <mat-option *ngFor="let device of devices" [value]="device.id">
+              {{ device.deviceId }} ({{ device.status }})
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-        <div class="row">
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Select Driver</mat-label>
-            <mat-select formControlName="employeeId" required>
-              <mat-option *ngFor="let driver of drivers" [value]="driver.id">
-                {{driver.fullName}} ({{driver.employeeId}}) - {{driver.status}}
-              </mat-option>
-            </mat-select>
-            <mat-hint>Only active drivers are shown</mat-hint>
-            <mat-error *ngIf="form.get('employeeId')?.hasError('required')">
-              Driver selection is required
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </mat-dialog-content>
-
-      <mat-dialog-actions align="end">
-        <button mat-button type="button" [mat-dialog-close]="false">Cancel</button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || isLoading">
-          <mat-icon>link</mat-icon>
-          Assign Device
-        </button>
-      </mat-dialog-actions>
-    </form>
+        <mat-form-field>
+          <mat-label>Select Driver</mat-label>
+          <mat-select formControlName="employeeId" required>
+            <mat-option *ngFor="let driver of drivers" [value]="driver.id">
+              {{ driver.fullName }} ({{ driver.employeeId }}) - {{ driver.status }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </form>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <button mat-button (click)="dialogRef.close()">Cancel</button>
+      <button mat-raised-button color="primary"
+              (click)="onSubmit()"
+              [disabled]="form.invalid">
+        Assign Device
+      </button>
+    </mat-dialog-actions>
   `,
   styles: [`
-    .row { margin-bottom: 16px; }
-    mat-form-field { width: 100%; }
+    mat-form-field { width: 100%; margin-bottom: 16px; }
   `]
 })
 export class AssignDeviceDialog implements OnInit {
   form: FormGroup;
   drivers: Employee[] = [];
+  devices: DeviceResponse[] = [];
   isLoading = false;
 
   constructor(
     private fb: FormBuilder,
-    private dialogRef: MatDialogRef<AssignDeviceDialog>,
-    private ambulanceService: AmbulanceService,
-    @Inject(MAT_DIALOG_DATA) public data: DeviceResponse
+    public dialogRef: MatDialogRef<AssignDeviceDialog>,
+    private ambulanceService: AmbulanceService
   ) {
     this.form = this.fb.group({
+      deviceId: ['', Validators.required],
       employeeId: ['', Validators.required]
     });
   }
 
   ngOnInit() {
     this.loadDrivers();
+    this.loadDevices();
   }
 
   private loadDrivers() {
@@ -81,12 +78,18 @@ export class AssignDeviceDialog implements OnInit {
     });
   }
 
+  private loadDevices() {
+    this.ambulanceService.getAllDevices().subscribe({
+      next: (response) => {
+        this.devices = response.data;
+      },
+      error: (error) => console.error('Error loading devices:', error)
+    });
+  }
+
   onSubmit(): void {
     if (this.form.valid) {
-      this.dialogRef.close({
-        deviceId: this.data.id,
-        employeeId: this.form.value.employeeId
-      });
+      this.dialogRef.close(this.form.value);
     }
   }
 }

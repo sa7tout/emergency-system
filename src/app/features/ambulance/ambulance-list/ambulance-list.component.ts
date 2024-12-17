@@ -142,7 +142,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
               <ng-container matColumnDef="location">
                 <mat-header-cell *matHeaderCellDef>Location</mat-header-cell>
                 <mat-cell *matCellDef="let row">
-                  {{row.currentLatitude.toFixed(6)}}, {{row.currentLongitude.toFixed(6)}}
+                  {{ row.currentLatitude && row.currentLongitude ?
+                      row.currentLatitude.toFixed(6) + ', ' + row.currentLongitude.toFixed(6) :
+                      'Unknown' }}
                 </mat-cell>
               </ng-container>
 
@@ -260,8 +262,13 @@ export class AmbulanceListComponent implements OnInit {
 
   loadAmbulances() {
     this.ambulanceService.getAllAmbulances().subscribe({
-      next: (data) => {
-        this.dataSource.data = data;
+      next: (response) => {
+        console.log('API Response:', response);
+        if (response.success) {
+          this.dataSource.data = response.data; // Extract data from the response
+        } else {
+          console.error('Failed to load ambulances:', response.message);
+        }
       },
       error: (error) => console.error('Error loading ambulances:', error)
     });
