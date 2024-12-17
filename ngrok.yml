@@ -1,22 +1,29 @@
 version: 2
-authtoken: YOUR_AUTH_TOKEN
+authtoken: 2odYzQDYfH6uC3pUaOT9DwlT1N4_7bnPkAmXWxo3gkrbE9Wg1
 tunnels:
   gateway:
     proto: http
     addr: 8090
     domain: aware-willingly-monkfish.ngrok-free.app
-  auth:
+
+  memoria:
     proto: http
-    addr: 8091
-  ambulance:
-    proto: http
-    addr: 8092
-  emergency:
-    proto: http
-    addr: 8093
-  hospital:
-    proto: http
-    addr: 8094
-  route:
-    proto: http
-    addr: 8095
+    addr: 8070
+
+
+  #   auth:
+  #     proto: http
+  #     addr: 8091
+  #   ambulance:
+  #     proto: http
+  #     addr: 8092
+  #   emergency:
+  #     proto: http
+  #     addr: 8093
+  #   hospital:
+  #     proto: http
+  #     addr: 8094
+  #   route:
+  #     proto: http
+  #     addr: 8095
+

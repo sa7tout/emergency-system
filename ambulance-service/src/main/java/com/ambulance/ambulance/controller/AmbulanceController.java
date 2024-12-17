@@ -19,7 +19,7 @@ public class AmbulanceController {
     private final AmbulanceService ambulanceService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<BaseResponse<AmbulanceResponse>> registerAmbulance(
             @RequestBody AmbulanceRegistrationRequest request) {
         return ResponseEntity.ok(BaseResponse.success(ambulanceService.registerAmbulance(request)));
@@ -49,7 +49,7 @@ public class AmbulanceController {
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<BaseResponse<AmbulanceResponse>> updateAmbulance(
             @PathVariable Long id,
             @RequestBody AmbulanceUpdateRequest request) {
@@ -63,5 +63,43 @@ public class AmbulanceController {
             @RequestParam LocalDateTime endTime) {
         return ResponseEntity.ok(BaseResponse.success(
                 ambulanceService.getLocationHistory(id, startTime, endTime)));
+    }
+
+    @PostMapping("/devices")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<BaseResponse<DeviceResponse>> registerDevice(
+            @RequestBody DeviceRegistrationRequest request) {
+        return ResponseEntity.ok(BaseResponse.success(ambulanceService.registerDevice(request)));
+    }
+
+    @GetMapping("/devices")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<BaseResponse<List<DeviceResponse>>> getAllDevices() {
+        return ResponseEntity.ok(BaseResponse.success(ambulanceService.getAllDevices()));
+    }
+
+    @GetMapping("/devices/{id}")
+    public ResponseEntity<BaseResponse<DeviceResponse>> getDevice(@PathVariable Long id) {
+        return ResponseEntity.ok(BaseResponse.success(ambulanceService.getDevice(id)));
+    }
+
+    @PatchMapping("/devices/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<BaseResponse<DeviceResponse>> updateDeviceStatus(
+            @PathVariable Long id,
+            @RequestParam String status) {
+        return ResponseEntity.ok(BaseResponse.success(ambulanceService.updateDeviceStatus(id, status)));
+    }
+
+    @PostMapping("/devices/{id}/ping")
+    public ResponseEntity<BaseResponse<DeviceResponse>> updateDevicePing(@PathVariable Long id) {
+        return ResponseEntity.ok(BaseResponse.success(ambulanceService.updateDevicePing(id)));
+    }
+
+    @DeleteMapping("/devices/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<BaseResponse<Void>> deactivateDevice(@PathVariable Long id) {
+        ambulanceService.deactivateDevice(id);
+        return ResponseEntity.ok(BaseResponse.success(null));
     }
 }

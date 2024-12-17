@@ -1,6 +1,5 @@
 package com.ambulance.ambulance.dto;
 
-import com.ambulance.common.enums.AmbulanceStatus;
 import lombok.Data;
 
 @Data

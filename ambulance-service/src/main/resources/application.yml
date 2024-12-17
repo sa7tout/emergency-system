@@ -37,3 +37,5 @@ springdoc:
 logging:
   level:
     com.ambulance: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate: DEBUG
