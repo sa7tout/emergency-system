@@ -2,13 +2,14 @@ package com.ambulance.common.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Entity
 @Table(name = "employees")
+@JsonIgnoreProperties({"createdBy", "deviceAssignments", "pin"})
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -284,4 +284,9 @@ public class AmbulanceService {
         device.setStatus("ACTIVE");
         deviceRepository.save(device);
     }
+
+    @Transactional(readOnly = true)
+    public List<Employee> getAvailableDrivers() {
+        return employeeRepository.findByRoleAndStatusOrderByFullNameAsc("DRIVER", "ACTIVE");
+    }
 }

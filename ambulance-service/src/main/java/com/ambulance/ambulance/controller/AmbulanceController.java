@@ -4,6 +4,7 @@ import com.ambulance.ambulance.dto.*;
 import com.ambulance.ambulance.service.AmbulanceService;
 import com.ambulance.common.dto.BaseResponse;
 import com.ambulance.common.dto.Location;
+import com.ambulance.common.entity.Employee;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -101,5 +102,17 @@ public class AmbulanceController {
     public ResponseEntity<BaseResponse<Void>> deactivateDevice(@PathVariable Long id) {
         ambulanceService.deactivateDevice(id);
         return ResponseEntity.ok(BaseResponse.success(null));
+    }
+    @GetMapping("/drivers")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<BaseResponse<List<Employee>>> getAvailableDrivers() {
+        List<Employee> drivers = ambulanceService.getAvailableDrivers();
+        return ResponseEntity.ok(BaseResponse.success(drivers));
+    }
+    @PostMapping("/devices/assignments")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<BaseResponse<DeviceAssignmentResponse>> assignDeviceToDriver(
+            @RequestBody DeviceAssignmentRequest request) {
+        return ResponseEntity.ok(BaseResponse.success(ambulanceService.assignDeviceToEmployee(request)));
     }
 }
