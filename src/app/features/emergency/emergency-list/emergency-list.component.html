@@ -1,0 +1,59 @@
+<div class="emergency-container">
+  <div class="header">
+    <h2>Emergency Cases</h2>
+    <div class="stats">
+      <div class="stat-card">
+        <span class="label">Pending</span>
+        <span class="value">{{getPendingCount() | async}}</span>
+      </div>
+      <div class="stat-card">
+        <span class="label">In Progress</span>
+        <span class="value">{{getInProgressCount() | async}}</span>
+      </div>
+      <div class="stat-card">
+        <span class="label">Completed</span>
+        <span class="value">{{getCompletedCount() | async}}</span>
+      </div>
+    </div>
+  </div>
+
+  <mat-table [dataSource]="emergencies$" class="mat-elevation-z8">
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.id}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="patientName">
+      <mat-header-cell *matHeaderCellDef>Patient Name</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.patientName}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <mat-chip [color]="getStatusColor(element.status)">{{element.status}}</mat-chip>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="assignedAmbulance">
+      <mat-header-cell *matHeaderCellDef>Ambulance</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.assignedAmbulanceId || 'Not Assigned'}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="assignedHospital">
+      <mat-header-cell *matHeaderCellDef>Hospital</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.assignedHospitalId || 'Not Assigned'}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <button mat-button color="primary" (click)="viewDetails(element)">View</button>
+        <button mat-button color="accent" *ngIf="element.status === 'PENDING'" (click)="assign(element)">Assign</button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+</div>

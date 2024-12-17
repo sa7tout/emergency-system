@@ -1,0 +1,38 @@
+.emergency-container {
+  padding: 20px;
+
+  .header {
+    margin-bottom: 20px;
+  }
+
+  .stats {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .stat-card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    min-width: 120px;
+
+    .label {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+    }
+  }
+
+  mat-table {
+    width: 100%;
+  }
+}

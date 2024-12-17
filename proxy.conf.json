@@ -1,0 +1,27 @@
+{
+  "/emergency/api/v1/auth": {
+    "target": "http://localhost:8091",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/emergency/api/v1/api/ambulances": {
+    "target": "http://localhost:8092",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/emergency/api/v1/emergencies": {
+    "target": "http://localhost:8093",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/emergency/api/v1/api/hospitals": {
+    "target": "http://localhost:8094",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/emergency/api/v1/api/routes": {
+    "target": "http://localhost:8095",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

@@ -1,0 +1,125 @@
+<div class="dashboard-container">
+  <!-- Main Toolbar -->
+  <mat-toolbar class="toolbar" color="primary">
+    <button mat-icon-button (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <div class="brand-container">
+      <img src="assets/emergency-logo.svg" alt="Logo" class="brand-logo">
+      <span class="brand-text">Emergency Response Hub</span>
+    </div>
+
+    <div class="toolbar-actions">
+      <div class="quick-stats">
+        <div class="stat-item">
+          <span class="stat-label">Active Emergencies</span>
+          <span class="stat-value">12</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Available Units</span>
+          <span class="stat-value">8</span>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button mat-icon-button [matBadge]="3" matBadgeColor="warn" class="notification-btn">
+          <mat-icon>notifications</mat-icon>
+        </button>
+        <button mat-icon-button class="settings-btn">
+          <mat-icon>settings</mat-icon>
+        </button>
+        <button mat-button class="logout-btn" (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+  </mat-toolbar>
+
+  <!-- Sidenav Container -->
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #sidenav mode="side" opened class="sidenav">
+      <!-- Admin Profile -->
+      <div class="admin-profile">
+        <div class="profile-avatar">
+          <mat-icon class="avatar-icon">account_circle</mat-icon>
+        </div>
+        <div class="profile-info">
+          <h3 class="admin-name">System Admin</h3>
+          <span class="admin-role">Emergency Coordinator</span>
+        </div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <mat-nav-list class="nav-list">
+        <div class="nav-section">
+          <h4 class="nav-section-title">MAIN</h4>
+          <a mat-list-item routerLink="/dashboard" routerLinkActive="active">
+            <mat-icon>dashboard</mat-icon>
+            <span>Overview</span>
+          </a>
+          <a mat-list-item routerLink="/emergencies" routerLinkActive="active">
+            <mat-icon class="emergency-icon">warning</mat-icon>
+            <span>Active Emergencies</span>
+            <span class="alert-badge">5</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <h4 class="nav-section-title">RESOURCES</h4>
+          <a mat-list-item routerLink="/ambulances" routerLinkActive="active">
+            <mat-icon>local_hospital</mat-icon>
+            <span>Ambulance Fleet</span>
+          </a>
+          <a mat-list-item routerLink="/hospitals" routerLinkActive="active">
+            <mat-icon>business</mat-icon>
+            <span>Hospital Network</span>
+          </a>
+          <a mat-list-item routerLink="/personnel" routerLinkActive="active">
+            <mat-icon>people</mat-icon>
+            <span>Personnel</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <h4 class="nav-section-title">ANALYTICS</h4>
+          <a mat-list-item routerLink="/reports" routerLinkActive="active">
+            <mat-icon>assessment</mat-icon>
+            <span>Reports</span>
+          </a>
+          <a mat-list-item routerLink="/statistics" routerLinkActive="active">
+            <mat-icon>analytics</mat-icon>
+            <span>Statistics</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <h4 class="nav-section-title">SYSTEM</h4>
+          <a mat-list-item routerLink="/settings" routerLinkActive="active">
+            <mat-icon>settings</mat-icon>
+            <span>Settings</span>
+          </a>
+          <a mat-list-item routerLink="/maintenance" routerLinkActive="active">
+            <mat-icon>build</mat-icon>
+            <span>Maintenance</span>
+          </a>
+        </div>
+      </mat-nav-list>
+
+      <!-- System Status -->
+      <div class="system-status">
+        <div class="status-indicator online">
+          <span class="status-dot"></span>
+          System Online
+        </div>
+        <span class="status-time">Last updated: 5m ago</span>
+      </div>
+    </mat-sidenav>
+
+    <!-- Main Content Area -->
+    <mat-sidenav-content class="content">
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
