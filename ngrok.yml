@@ -1,14 +1,10 @@
 version: 2
-authtoken: 2odYzQDYfH6uC3pUaOT9DwlT1N4_7bnPkAmXWxo3gkrbE9Wg1
+authtoken: AUTH_TOKEN
 tunnels:
   gateway:
     proto: http
     addr: 8090
-    domain: aware-willingly-monkfish.ngrok-free.app
-
-  memoria:
-    proto: http
-    addr: 8070
+    domain: Domain
 
 
   #   auth:
