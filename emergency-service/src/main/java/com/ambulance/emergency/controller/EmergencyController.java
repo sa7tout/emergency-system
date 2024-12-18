@@ -7,6 +7,7 @@ import com.ambulance.emergency.service.EmergencyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class EmergencyController {
     private final EmergencyService emergencyService;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public ResponseEntity<BaseResponse<EmergencyResponse>> createEmergency(@Valid @RequestBody CreateEmergencyRequest request) {
         EmergencyResponse response = emergencyService.createEmergency(request);

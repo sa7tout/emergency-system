@@ -1,4 +1,4 @@
-package com.ambulance.ambulance.entity;
+package com.ambulance.common.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

@@ -1,4 +1,3 @@
-// emergency-service/src/main/java/com/ambulance/emergency/config/SecurityConfig.java
 package com.ambulance.emergency.config;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +26,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
+                                "/ws/**",
                                 "/emergency-case/api-docs/**",
                                 "/emergency-case/api-docs.yaml",
                                 "/emergency-case/swagger-ui/**",
@@ -34,6 +34,7 @@ public class SecurityConfig {
                                 "/emergency-case/api-docs/**",
                                 "/emergency-case/api-docs/swagger-config"
                         ).permitAll()
+                        .requestMatchers("/ws/**").hasAnyAuthority("ADMIN", "DRIVER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

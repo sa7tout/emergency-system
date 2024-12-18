@@ -1,6 +1,6 @@
-package com.ambulance.ambulance.repository;
+package com.ambulance.common.repository;
 
-import com.ambulance.ambulance.entity.DeviceEntity;
+import com.ambulance.common.entity.DeviceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DeviceRepository extends JpaRepository<DeviceEntity, Long> {

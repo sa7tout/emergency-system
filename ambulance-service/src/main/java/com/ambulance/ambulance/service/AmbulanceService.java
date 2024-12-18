@@ -2,28 +2,26 @@ package com.ambulance.ambulance.service;
 
 import com.ambulance.ambulance.dto.*;
 import com.ambulance.ambulance.entity.AmbulanceEntity;
-import com.ambulance.ambulance.entity.DeviceAssignmentEntity;
-import com.ambulance.ambulance.entity.DeviceEntity;
 import com.ambulance.ambulance.repository.AmbulanceRepository;
-import com.ambulance.ambulance.repository.DeviceAssignmentRepository;
-import com.ambulance.ambulance.repository.DeviceRepository;
 import com.ambulance.common.dto.Location;
+import com.ambulance.common.entity.DeviceAssignmentEntity;
+import com.ambulance.common.entity.DeviceEntity;
 import com.ambulance.common.entity.Employee;
 import com.ambulance.common.enums.AmbulanceStatus;
 import com.ambulance.common.exception.BusinessException;
+import com.ambulance.common.repository.DeviceAssignmentRepository;
+import com.ambulance.common.repository.DeviceRepository;
 import com.ambulance.common.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.influxdb.InfluxDB;
-import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 

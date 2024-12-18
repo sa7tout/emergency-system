@@ -1,17 +1,23 @@
 package com.ambulance.emergency.dto;
 
-import lombok.Data;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
 
 @Data
 public class CreateEmergencyRequest {
-    @NotNull
+    @NotNull(message = "Pickup latitude is required")
     private Double pickupLatitude;
-    @NotNull
+
+    @NotNull(message = "Pickup longitude is required")
     private Double pickupLongitude;
-    @NotNull
+
+    @NotNull(message = "Patient name is required")
+    @Size(min = 2, max = 100, message = "Patient name must be between 2 and 100 characters")
     private String patientName;
-    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$")
+
+    @NotNull(message = "Contact number is required")
+    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number format")
     private String contactNumber;
 }

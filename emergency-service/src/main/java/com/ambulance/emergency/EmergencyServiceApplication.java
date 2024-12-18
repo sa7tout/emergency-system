@@ -6,9 +6,10 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication(scanBasePackages = "com.ambulance")
-@EntityScan("com.ambulance.emergency.entity")
-@EnableJpaRepositories("com.ambulance.emergency.repository")
+@EntityScan(basePackages = {"com.ambulance.common.entity", "com.ambulance.emergency.entity"})
+@EnableJpaRepositories(basePackages = {"com.ambulance.emergency.repository", "com.ambulance.common.repository"})
 public class EmergencyServiceApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(EmergencyServiceApplication.class, args);
     }

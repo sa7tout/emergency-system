@@ -27,3 +27,9 @@ springdoc:
     url: /hospital/api-docs
   api-docs:
     path: /hospital/api-docs
+
+logging:
+  level:
+    com.ambulance: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG

@@ -37,5 +37,5 @@ public class Employee {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "employee")
-    private List<DeviceAssignment> deviceAssignments;
+    private List<DeviceAssignmentEntity> deviceAssignments;
 }

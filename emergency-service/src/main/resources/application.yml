@@ -32,3 +32,11 @@ server:
   port: 8093
   servlet:
     context-path: /emergency/api/v1
+
+logging:
+  level:
+    com.ambulance: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.messaging: DEBUG
+    org.springframework.web.socket: DEBUG
