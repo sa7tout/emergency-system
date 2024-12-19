@@ -205,7 +205,7 @@ export class AddEditAmbulanceDialog implements OnInit {
       next: (response: ApiResponse<DeviceResponse[]>) => {
         const devices: DeviceResponse[] = response.data || [];
         //this.deviceOptions = devices.filter((d: DeviceResponse) => d.status === 'ACTIVE' && !d.ambulanceUnit);
-        this.deviceOptions = devices.filter((d: DeviceResponse) => d.status === 'ACTIVE');
+        this.deviceOptions = devices.filter((d: DeviceResponse) => d.status === 'ASSIGNED');
 
 
         if (this.deviceOptions.length === 0) {
@@ -228,20 +228,32 @@ export class AddEditAmbulanceDialog implements OnInit {
 
 
   onSubmit() {
-    if (this.form.valid) {
-      if (this.deviceOptions.length === 0) {
-        this.snackBar.open('Cannot create ambulance without an available device.', 'Close', {
-          duration: 5000,
+      if (this.form.valid) {
+        if (this.deviceOptions.length === 0) {
+          this.snackBar.open('Cannot create ambulance without an available device.', 'Close', {
+            duration: 5000,
+            panelClass: ['warn-snackbar']
+          });
+          return;
+        }
+
+        this.ambulanceService.registerAmbulance(this.form.value).subscribe({
+          next: (response) => {
+            this.dialogRef.close(response);
+          },
+          error: (error) => {
+            const errorMessage = error.error?.message || 'Failed to register ambulance';
+            this.snackBar.open(errorMessage, 'Close', {
+              duration: 5000,
+              panelClass: ['error-snackbar']
+            });
+          }
+        });
+      } else {
+        this.snackBar.open('Please fill all required fields correctly.', 'Close', {
+          duration: 3000,
           panelClass: ['warn-snackbar']
         });
-        return;
-      }
-      this.dialogRef.close(this.form.value);
-    } else {
-      this.snackBar.open('Please fill all required fields correctly.', 'Close', {
-        duration: 3000,
-        panelClass: ['warn-snackbar']
-      });
-    }
-  }
+}
+}
 }

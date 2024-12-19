@@ -263,7 +263,7 @@ export class AmbulanceListComponent implements OnInit {
   loadAmbulances() {
     this.ambulanceService.getAllAmbulances().subscribe({
       next: (response) => {
-        console.log('API Response:', response);
+        //console.log('API Response:', response);
         if (response.success) {
           this.dataSource.data = response.data; // Extract data from the response
         } else {
