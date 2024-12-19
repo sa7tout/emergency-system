@@ -38,4 +38,8 @@ public class Employee {
 
     @OneToMany(mappedBy = "employee")
     private List<DeviceAssignmentEntity> deviceAssignments;
+
+    public String getFullName() {
+        return fullName;
+    }
 }

@@ -10,10 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -43,7 +40,15 @@ public class JwtUtil {
 
     public Collection<? extends GrantedAuthority> extractAuthorities(String token) {
         Claims claims = extractAllClaims(token);
-        List<String> roles = claims.get("roles", List.class);
+        Object rolesObj = claims.get("role") != null ? claims.get("role") : claims.get("roles");
+
+        List<String> roles = new ArrayList<>();
+        if (rolesObj instanceof List) {
+            roles = (List<String>) rolesObj;
+        } else if (rolesObj instanceof String) {
+            roles.add((String) rolesObj);
+        }
+
         return roles.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());

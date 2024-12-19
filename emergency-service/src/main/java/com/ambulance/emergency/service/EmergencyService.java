@@ -37,6 +37,8 @@ public class EmergencyService {
             emergency.setPatientName(request.getPatientName());
             emergency.setContactNumber(request.getContactNumber());
             emergency.setStatus(EmergencyStatus.PENDING);
+            emergency.setAssignedAmbulanceId(request.getAssignedAmbulanceId());
+            emergency.setAssignedHospitalId(request.getAssignedHospitalId());
             emergency.setCreatedAt(LocalDateTime.now());
             emergency.setUpdatedAt(LocalDateTime.now());
 

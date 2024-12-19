@@ -1,6 +1,8 @@
 package com.ambulance.common.repository;
 
 import com.ambulance.common.entity.DeviceAssignmentEntity;
+import com.ambulance.common.entity.Employee;
+import com.ambulance.common.entity.Ambulance;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,6 +24,13 @@ public interface DeviceAssignmentRepository extends JpaRepository<DeviceAssignme
             "WHERE ad.device_id = :deviceId AND a.id = :ambulanceId)",
             nativeQuery = true)
     boolean isDeviceAssignedToAmbulance(@Param("deviceId") String deviceId, @Param("ambulanceId") Long ambulanceId);
+
+    @Query("SELECT e FROM DeviceAssignmentEntity da " +
+            "JOIN da.employee e " +
+            "JOIN da.device d " +
+            "JOIN Ambulance a ON a.deviceId = d.deviceId " +
+            "WHERE a.id = :ambulanceId AND da.active = true")
+    Optional<Employee> findDriverByAmbulanceId(@Param("ambulanceId") Long ambulanceId);
 
     @Query(value = "SELECT * FROM device_assignments WHERE device_id = :deviceId AND active = true",
             nativeQuery = true)

@@ -13,18 +13,9 @@ import org.springframework.stereotype.Controller;
 @Slf4j
 public class EmergencyWebSocketController {
     private final EmergencyWebSocketHandler webSocketHandler;
-    private final EmergencyRepository emergencyRepository;
 
     public void sendEmergencyUpdate(EmergencyNotification notification) {
-        log.debug("Sending notification to admin topic: {}", notification);
-        webSocketHandler.sendEmergencyUpdate(notification); // Use the WebSocket handler
-
-        EmergencyCase emergency = emergencyRepository.findById(notification.getEmergencyId())
-                .orElse(null);
-
-        if (emergency != null && emergency.getAssignedAmbulanceId() != null) {
-            log.debug("Sending notification to driver topic: {}", notification);
-            webSocketHandler.sendEmergencyUpdate(notification); // Use the handler for the driver as well
-        }
+        log.debug("Sending emergency notification: {}", notification);
+        webSocketHandler.sendEmergencyUpdate(notification);
     }
 }

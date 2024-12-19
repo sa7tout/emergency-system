@@ -20,4 +20,10 @@ public class CreateEmergencyRequest {
     @NotNull(message = "Contact number is required")
     @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number format")
     private String contactNumber;
+
+    @NotNull(message = "Assigned ambulance ID is required")
+    private Long assignedAmbulanceId;
+
+    @NotNull(message = "Assigned hospital ID is required")
+    private Long assignedHospitalId;
 }

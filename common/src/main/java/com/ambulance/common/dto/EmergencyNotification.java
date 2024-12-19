@@ -2,7 +2,6 @@ package com.ambulance.common.dto;
 
 import lombok.Data;
 import lombok.Builder;
-import org.springframework.util.RouteMatcher;
 
 @Data
 @Builder
@@ -11,5 +10,6 @@ public class EmergencyNotification {
     private Location patientLocation;
     private String patientDetails;
     private Hospital nearestHospital;
-    private RouteMatcher.Route suggestedRoute;
+    private Long assignedAmbulanceId;
+    private String assignedDriverName;
 }
