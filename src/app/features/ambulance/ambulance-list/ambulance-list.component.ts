@@ -14,10 +14,10 @@ import { AmbulanceService } from '../ambulance.service';
 import { AmbulanceResponse, AmbulanceStatus } from '../models/ambulance.model';
 import { AddEditAmbulanceDialog } from '../dialogs/add-edit-ambulance.dialog';
 import { AddEditDeviceDialog } from '../dialogs/add-edit-device.dialog';
-import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { AssignDeviceDialog } from '../dialogs/assign-device.dialog';
 import { DeviceResponse, DeviceAssignmentRequest, Employee } from '../models/ambulance.model';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SnackbarService } from 'src/app/shared/services/snackbar.service';
 
 @Component({
   selector: 'app-ambulance-list',
@@ -34,8 +34,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatInputModule,
     MatFormFieldModule,
     MatDialogModule,
-    MatSnackBarModule,
   ],
+  providers: [SnackbarService],
   template: `
     <div class="container mx-auto p-6">
       <div class="relative w-full mb-6">
@@ -232,6 +232,45 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         max-width: 100%;
       }
     }
+    .mat-column-status .mat-mdc-chip {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      padding: 4px 12px !important;
+      white-space: nowrap !important;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 100px; /* Set a minimum width */
+      max-width: 150px; /* Set a maximum width to constrain size */
+      height: auto !important;
+      font-size: 14px; /* Adjust font size */
+    }
+
+    .mat-column-status,
+    .mat-column-vehicleNumber,
+    .mat-column-currentAssignment,
+    .mat-column-location,
+    .mat-column-lastUpdated {
+      text-align: center;
+      justify-content: center;
+      padding: 0 8px;
+    }
+
+    mat-header-cell {
+      justify-content: center;
+      text-align: center;
+    }
+
+    mat-cell {
+      justify-content: center;
+      text-align: center;
+    }
+
+    .mat-column-actions {
+      justify-content: center;
+      min-width: 160px;
+    }
+
   `]
 })
 export class AmbulanceListComponent implements OnInit {
@@ -244,7 +283,7 @@ export class AmbulanceListComponent implements OnInit {
 
   constructor(
     private ambulanceService: AmbulanceService,
-    private snackBar: MatSnackBar,
+    private snackbarService: SnackbarService,
     private dialog: MatDialog
   ) {
     this.dataSource = new MatTableDataSource();
@@ -316,16 +355,15 @@ export class AmbulanceListComponent implements OnInit {
         if (result) {
           this.ambulanceService.registerDevice(result).subscribe({
             next: () => {
-              this.snackBar.open('Device registered successfully', 'Close', {
+              this.snackbarService.showSnackbar('Device registered successfully', 'Close', {
                 duration: 3000,
                 panelClass: ['success-snackbar']
               });
-              // Optionally refresh data
               this.loadAmbulances();
             },
             error: (error) => {
               console.error('Error registering device:', error);
-              this.snackBar.open(error.error?.message || 'Error registering device', 'Close', {
+              this.snackbarService.showSnackbar(error.error?.message || 'Error registering device', 'Close', {
                 duration: 5000,
                 panelClass: ['error-snackbar']
               });
@@ -341,44 +379,39 @@ export class AmbulanceListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.ambulanceService.registerAmbulance(result).subscribe({
-          next: () => {
-            this.loadAmbulances();
-          },
-          error: (error) => console.error('Error adding ambulance:', error)
-        });
+      if (result?.success) { // Check for success property instead of just result
+        this.loadAmbulances(); // Only reload the list
       }
     });
   }
 
 assignDriver(device: DeviceResponse) {
-  const dialogRef = this.dialog.open(AssignDeviceDialog, {
-    width: '500px',
-    data: device,
-    disableClose: true
-  });
+    const dialogRef = this.dialog.open(AssignDeviceDialog, {
+      width: '500px',
+      data: device,
+      disableClose: true
+    });
 
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      this.ambulanceService.assignDeviceToDriver(result).subscribe({
-        next: () => {
-          this.snackBar.open('Device assigned successfully', 'Close', {
-            duration: 3000,
-            panelClass: ['success-snackbar']
-          });
-          this.loadDevices();
-        },
-        error: (error) => {
-          this.snackBar.open(error.error?.message || 'Error assigning device', 'Close', {
-            duration: 5000,
-            panelClass: ['error-snackbar']
-          });
-        }
-      });
-    }
-  });
-}
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.ambulanceService.assignDeviceToDriver(result).subscribe({
+          next: () => {
+            this.snackbarService.showSnackbar('Device assigned successfully', 'Close', {
+              duration: 3000,
+              panelClass: ['success-snackbar']
+            });
+            this.loadDevices();
+          },
+          error: (error) => {
+            this.snackbarService.showSnackbar(error.error?.message || 'Error assigning device', 'Close', {
+              duration: 5000,
+              panelClass: ['error-snackbar']
+            });
+          }
+        });
+      }
+    });
+  }
 
   editAmbulance(ambulance: AmbulanceResponse) {
     const dialogRef = this.dialog.open(AddEditAmbulanceDialog, {
@@ -388,11 +421,21 @@ assignDriver(device: DeviceResponse) {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.ambulanceService.updateAmbulance(ambulance.id, result).subscribe({
+        const { id, ...updateData } = result;
+        this.ambulanceService.updateAmbulance(ambulance.id, updateData).subscribe({
           next: () => {
             this.loadAmbulances();
+            this.snackbarService.showSnackbar('Ambulance updated successfully', 'Close', {
+              duration: 3000,
+              panelClass: ['success-snackbar']
+            });
           },
-          error: (error) => console.error('Error updating ambulance:', error)
+          error: (error) => {
+            this.snackbarService.showSnackbar(error.error?.message || 'Error updating ambulance', 'Close', {
+              duration: 5000,
+              panelClass: ['error-snackbar']
+            });
+          }
         });
       }
     });
@@ -419,36 +462,37 @@ assignDriver(device: DeviceResponse) {
   }
 
 assignDeviceDialog() {
-  this.ambulanceService.getAllDevices().subscribe({
-    next: (response) => {
-      if (response.success && response.data.length > 0) {
-        const dialogRef = this.dialog.open(AssignDeviceDialog, {
-          width: '500px',
-          data: response.data[0],
-          disableClose: true
-        });
+    this.ambulanceService.getAllDevices().subscribe({
+      next: (response) => {
+        if (response.success && response.data.length > 0) {
+          const dialogRef = this.dialog.open(AssignDeviceDialog, {
+            width: '500px',
+            data: response.data[0],
+            disableClose: true
+          });
 
-        dialogRef.afterClosed().subscribe(result => {
-          if (result) {
-            this.ambulanceService.assignDeviceToDriver(result).subscribe({
-              next: () => {
-                this.snackBar.open('Device assigned successfully', 'Close', {
-                  duration: 3000
-                });
-                this.loadAmbulances();
-              },
-              error: (error) => {
-                this.snackBar.open(error.error?.message || 'Error assigning device', 'Close', {
-                  duration: 5000
-                });
-              }
-            });
-          }
-        });
-      } else {
-        this.snackBar.open('No devices available to assign', 'Close', { duration: 3000 });
+          dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+              this.ambulanceService.assignDeviceToDriver(result).subscribe({
+                next: () => {
+                  this.snackbarService.showSnackbar('Device assigned successfully', 'Close', {
+                    duration: 3000
+                  });
+                  this.loadAmbulances();
+                },
+                error: (error) => {
+                  this.snackbarService.showSnackbar(error.error?.message || 'Error assigning device', 'Close', {
+                    duration: 5000
+                  });
+                }
+              });
+            }
+          });
+        } else {
+          this.snackbarService.showSnackbar('No devices available to assign', 'Close', { duration: 3000 });
+        }
       }
-    }
-  });
+    });
+  }
 }
-}
+

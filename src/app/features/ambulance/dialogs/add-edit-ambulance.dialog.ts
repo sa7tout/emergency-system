@@ -13,7 +13,6 @@ interface ApiResponse<T> {
   data: T;
 }
 
-
 @Component({
   selector: 'app-add-edit-ambulance-dialog',
   standalone: true,
@@ -114,9 +113,6 @@ interface ApiResponse<T> {
                   {{device.deviceId}} ({{device.ambulanceUnit || 'Unassigned'}})
                 </mat-option>
               </mat-select>
-              <mat-error *ngIf="form.get('deviceId')?.hasError('required')">
-                Device is required
-              </mat-error>
               <mat-hint *ngIf="deviceOptions.length === 0">
                 No available devices. Please register a device first.
               </mat-hint>
@@ -140,7 +136,7 @@ interface ApiResponse<T> {
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="form.invalid || deviceOptions.length === 0">
+          [disabled]="form.invalid">
           {{data ? 'Update' : 'Add'}}
         </button>
       </mat-dialog-actions>
@@ -183,8 +179,7 @@ export class AddEditAmbulanceDialog implements OnInit {
         Validators.required
       ],
       deviceId: [
-        data?.deviceId || '',
-        Validators.required
+        data?.deviceId || ''
       ],
       status: [
         data?.status || AmbulanceStatus.AVAILABLE
@@ -204,9 +199,7 @@ export class AddEditAmbulanceDialog implements OnInit {
     this.ambulanceService.getAllDevices().subscribe({
       next: (response: ApiResponse<DeviceResponse[]>) => {
         const devices: DeviceResponse[] = response.data || [];
-        //this.deviceOptions = devices.filter((d: DeviceResponse) => d.status === 'ACTIVE' && !d.ambulanceUnit);
         this.deviceOptions = devices.filter((d: DeviceResponse) => d.status === 'ASSIGNED');
-
 
         if (this.deviceOptions.length === 0) {
           this.snackBar.open('No available devices found. Register a device first.', 'Close', {
@@ -225,18 +218,25 @@ export class AddEditAmbulanceDialog implements OnInit {
     });
   }
 
-
-
   onSubmit() {
-      if (this.form.valid) {
-        if (this.deviceOptions.length === 0) {
-          this.snackBar.open('Cannot create ambulance without an available device.', 'Close', {
-            duration: 5000,
-            panelClass: ['warn-snackbar']
-          });
-          return;
-        }
-
+    if (this.form.valid) {
+      if (this.data) {
+        // Updating existing ambulance
+        const { id, ...updateData } = this.form.value;
+        this.ambulanceService.updateAmbulance(this.data.id, updateData).subscribe({
+          next: (response) => {
+            this.dialogRef.close(response);
+          },
+          error: (error) => {
+            const errorMessage = error.error?.message || 'Failed to update ambulance';
+            this.snackBar.open(errorMessage, 'Close', {
+              duration: 5000,
+              panelClass: ['error-snackbar']
+            });
+          }
+        });
+      } else {
+        // Registering new ambulance
         this.ambulanceService.registerAmbulance(this.form.value).subscribe({
           next: (response) => {
             this.dialogRef.close(response);
@@ -249,11 +249,12 @@ export class AddEditAmbulanceDialog implements OnInit {
             });
           }
         });
-      } else {
-        this.snackBar.open('Please fill all required fields correctly.', 'Close', {
-          duration: 3000,
-          panelClass: ['warn-snackbar']
-        });
-}
-}
+      }
+    } else {
+      this.snackBar.open('Please fill all required fields correctly.', 'Close', {
+        duration: 3000,
+        panelClass: ['warn-snackbar']
+      });
+    }
+  }
 }

@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { EmergencyService } from '../emergency.service';
 import { EmergencyResponse } from '../models/emergency.model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { EmergencyDetailsDialog } from '../dialogs/emergency-details.dialog';
 
 @Component({
  selector: 'app-emergency-list',
@@ -16,15 +17,16 @@ import { map } from 'rxjs/operators';
  templateUrl: './emergency-list.component.html',
  styleUrls: ['./emergency-list.component.scss']
 })
-export class EmergencyListComponent implements OnInit {
+export class EmergencyListComponent {
  emergencies$: Observable<EmergencyResponse[]>;
  displayedColumns = ['id', 'patientName', 'status', 'assignedAmbulance', 'assignedHospital', 'actions'];
 
- constructor(private emergencyService: EmergencyService) {
+ constructor(
+   private emergencyService: EmergencyService,
+   private dialog: MatDialog
+ ) {
    this.emergencies$ = this.emergencyService.getEmergencies();
  }
-
- ngOnInit() {}
 
  getPendingCount(): Observable<number> {
    return this.emergencies$.pipe(
@@ -56,7 +58,10 @@ export class EmergencyListComponent implements OnInit {
  }
 
  viewDetails(emergency: EmergencyResponse) {
-   // Implement view details
+   this.dialog.open(EmergencyDetailsDialog, {
+     width: '800px',
+     data: emergency
+   });
  }
 
  assign(emergency: EmergencyResponse) {

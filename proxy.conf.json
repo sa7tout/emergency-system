@@ -4,7 +4,7 @@
     "secure": false,
     "changeOrigin": true
   },
-  "/emergency/api/v1/api/ambulances": {
+  "/emergency/api/v1/ambulances": {
     "target": "http://localhost:8092",
     "secure": false,
     "changeOrigin": true

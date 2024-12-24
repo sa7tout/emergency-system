@@ -1,15 +1,17 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '@shared/material.module';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { DeviceResponse } from '../models/ambulance.model';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { DeviceResponse, AmbulanceResponse } from '../models/ambulance.model';
+import { AmbulanceService } from '../ambulance.service';
+import { SnackbarService } from 'src/app/shared/services/snackbar.service';
 
 @Component({
  selector: 'app-add-edit-device-dialog',
  standalone: true,
  imports: [CommonModule, MaterialModule, ReactiveFormsModule],
+ providers: [SnackbarService],
  styles: [`
    :host {
      display: block;
@@ -57,12 +59,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
          <div class="row">
            <mat-form-field appearance="outline" class="form-field">
              <mat-label>Ambulance Unit</mat-label>
-             <input matInput formControlName="ambulanceUnit" placeholder="Enter ambulance unit">
+             <mat-select formControlName="ambulanceUnit">
+               <mat-option *ngFor="let ambulance of ambulances" [value]="ambulance.vehicleNumber">
+                 {{ambulance.vehicleNumber}}
+               </mat-option>
+             </mat-select>
              <mat-error *ngIf="form.get('ambulanceUnit')?.hasError('required')">
                Ambulance unit is required
-             </mat-error>
-             <mat-error *ngIf="form.get('ambulanceUnit')?.hasError('pattern')">
-               Use uppercase letters, numbers and hyphens (3-20 characters)
              </mat-error>
            </mat-form-field>
          </div>
@@ -93,14 +96,16 @@ import { MatSnackBar } from '@angular/material/snack-bar';
    </form>
  `
 })
-export class AddEditDeviceDialog {
+export class AddEditDeviceDialog implements OnInit {
  form: FormGroup;
+ ambulances: AmbulanceResponse[] = [];
 
  constructor(
    private fb: FormBuilder,
    private dialogRef: MatDialogRef<AddEditDeviceDialog>,
+   private ambulanceService: AmbulanceService,
    @Inject(MAT_DIALOG_DATA) public data: DeviceResponse | null,
-   private snackBar: MatSnackBar
+   private snackbarService: SnackbarService
  ) {
    this.form = this.fb.group({
      deviceId: [
@@ -109,10 +114,7 @@ export class AddEditDeviceDialog {
      ],
      ambulanceUnit: [
        data?.ambulanceUnit || '',
-       [
-         Validators.required,
-         Validators.pattern('^[A-Z0-9-]{3,20}$')
-       ]
+       [Validators.required]
      ]
    });
 
@@ -121,22 +123,42 @@ export class AddEditDeviceDialog {
    }
  }
 
- onSubmit(): void {
-   if (this.form.valid) {
-     try {
-       this.dialogRef.close(this.form.value);
-       this.snackBar.open('Device data submitted successfully', 'Close', {
-         duration: 3000,
-         panelClass: ['success-snackbar']
-       });
-     } catch (error) {
-       this.snackBar.open('Error submitting device data', 'Close', {
+ ngOnInit() {
+   this.loadAmbulances();
+ }
+
+ private loadAmbulances() {
+   this.ambulanceService.getAllAmbulances().subscribe({
+     next: (response) => {
+       if (response.success) {
+         this.ambulances = response.data;
+         if (this.ambulances.length === 0) {
+           this.snackbarService.showSnackbar('No ambulances found', 'Close', {
+             duration: 5000,
+             panelClass: ['warn-snackbar']
+           });
+         }
+       }
+     },
+     error: (error) => {
+       console.error('Error loading ambulances:', error);
+       this.snackbarService.showSnackbar('Error loading ambulances', 'Close', {
          duration: 5000,
          panelClass: ['error-snackbar']
        });
      }
+   });
+ }
+
+ onSubmit(): void {
+   if (this.form.valid) {
+     try {
+       this.dialogRef.close(this.form.value);
+     } catch (error) {
+       console.error('Error submitting form:', error);
+     }
    } else {
-     this.snackBar.open('Please check form errors', 'Close', {
+     this.snackbarService.showSnackbar('Please check form errors', 'Close', {
        duration: 3000,
        panelClass: ['warn-snackbar']
      });

@@ -1,32 +1,37 @@
-// src/app/features/emergency/emergency.service.ts
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../core/services/api.service';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { EmergencyResponse, CreateEmergencyRequest } from './models/emergency.model';
+
+interface ApiResponse<T> {
+ success: boolean;
+ message: string;
+ data: T;
+}
 
 @Injectable({
  providedIn: 'root'
 })
 export class EmergencyService {
  private emergenciesSubject = new BehaviorSubject<EmergencyResponse[]>([]);
- private socket!: WebSocket;
 
  constructor(private apiService: ApiService) {
-   this.setupWebSocket();
+   this.loadInitialEmergencies();
  }
 
- private setupWebSocket(): void {
-   this.socket = new WebSocket('ws://localhost:8093/emergency/api/v1/ws');
-
-   this.socket.onmessage = (event) => {
-     const emergency: EmergencyResponse = JSON.parse(event.data);
-     const current = this.emergenciesSubject.value;
-     this.emergenciesSubject.next([...current, emergency]);
-   };
-
-   this.socket.onerror = (error) => {
-     console.error('WebSocket error:', error);
-   };
+ private loadInitialEmergencies(): void {
+   this.apiService.get<ApiResponse<EmergencyResponse[]>>('emergency', '/emergencies')
+     .pipe(
+       map(response => response.data),
+       catchError(error => {
+         console.error('Failed to load emergencies', error);
+         return [];
+       })
+     )
+     .subscribe({
+       next: (emergencies) => this.emergenciesSubject.next(emergencies)
+     });
  }
 
  getEmergencies(): Observable<EmergencyResponse[]> {
@@ -35,5 +40,9 @@ export class EmergencyService {
 
  createEmergency(data: CreateEmergencyRequest): Observable<EmergencyResponse> {
    return this.apiService.post<EmergencyResponse>('emergency', '/emergencies', data);
+ }
+
+ refreshEmergencies(): void {
+   this.loadInitialEmergencies();
  }
 }

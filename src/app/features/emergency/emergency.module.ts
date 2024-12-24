@@ -1,4 +1,3 @@
-// app/features/emergency/models/emergency.model.ts
 export enum EmergencyStatus {
  PENDING = 'PENDING',
  ASSIGNED = 'ASSIGNED',
