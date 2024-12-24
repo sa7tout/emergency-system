@@ -21,12 +21,9 @@ export class HospitalService {
  constructor(private apiService: ApiService) {}
 
  getHospitals() {
-   return this.apiService.get<HospitalResponse[]>('hospital', '/api/hospitals');
- }
-
- getAvailableHospitals() {
    return this.apiService.get<HospitalResponse[]>('hospital', '/api/hospitals/available');
  }
+
 
  updateCapacity(id: number, availableBeds: number, currentLoad: number) {
    const queryParams = `availableBeds=${availableBeds}&currentLoad=${currentLoad}`;

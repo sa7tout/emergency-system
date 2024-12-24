@@ -18,3 +18,22 @@ export interface CreateEmergencyRequest {
   patientName: string;
   contactNumber?: string;
 }
+
+export enum EmergencyStatus {
+  PENDING = 'PENDING',
+  ASSIGNED = 'ASSIGNED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED'
+}
+
+export interface UpdateEmergencyRequest {
+  status: EmergencyStatus;
+  patientName: string;
+  contactNumber?: string;
+  pickupLatitude: number;
+  pickupLongitude: number;
+  assignedAmbulanceId?: number;
+  assignedHospitalId?: number;
+}
+

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiService } from '../../core/services/api.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { EmergencyResponse, CreateEmergencyRequest } from './models/emergency.model';
+import { EmergencyResponse, CreateEmergencyRequest, UpdateEmergencyRequest} from './models/emergency.model';
 
 interface ApiResponse<T> {
  success: boolean;
@@ -41,6 +41,10 @@ export class EmergencyService {
  createEmergency(data: CreateEmergencyRequest): Observable<EmergencyResponse> {
    return this.apiService.post<EmergencyResponse>('emergency', '/emergencies', data);
  }
+
+ updateEmergency(id: number, data: UpdateEmergencyRequest): Observable<EmergencyResponse> {
+    return this.apiService.patch<EmergencyResponse>('emergency', `/emergencies/${id}`, data);
+  }
 
  refreshEmergencies(): void {
    this.loadInitialEmergencies();
