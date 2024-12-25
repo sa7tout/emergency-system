@@ -54,6 +54,27 @@ public class HospitalService {
                 .orElseThrow(() -> new BusinessException("Hospital not found", "HOSPITAL_NOT_FOUND"));
     }
 
+    @Transactional
+    public HospitalResponse updateHospital(Long id, HospitalRequest request) {
+        Hospital hospital = findHospital(id);
+
+        hospital.setName(request.getName());
+        hospital.setAddress(request.getAddress());
+        hospital.setLatitude(request.getLatitude());
+        hospital.setLongitude(request.getLongitude());
+        hospital.setTotalBeds(request.getTotalBeds());
+
+        if (!hospital.getTotalBeds().equals(request.getTotalBeds())) {
+            hospital.setAvailableBeds(request.getTotalBeds());
+        }
+
+        hospital.setEmergencyCapacity(request.getEmergencyCapacity());
+        hospital.setSpecialties(request.getSpecialties());
+        hospital.setContactNumber(request.getContactNumber());
+
+        return mapToResponse(hospitalRepository.save(hospital));
+    }
+
     private HospitalResponse mapToResponse(Hospital hospital) {
         HospitalResponse response = new HospitalResponse();
         response.setId(hospital.getId());

@@ -40,4 +40,12 @@ public class HospitalController {
     public ResponseEntity<BaseResponse<List<HospitalResponse>>> getAvailableHospitals() {
         return ResponseEntity.ok(BaseResponse.success(hospitalService.getAvailableHospitals()));
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<BaseResponse<HospitalResponse>> updateHospital(
+            @PathVariable Long id,
+            @Valid @RequestBody HospitalRequest request) {
+        return ResponseEntity.ok(BaseResponse.success(hospitalService.updateHospital(id, request)));
+    }
 }
