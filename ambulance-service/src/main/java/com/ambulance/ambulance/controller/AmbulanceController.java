@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/ambulances")
+@RequestMapping("/ambulances")
 @RequiredArgsConstructor
 public class AmbulanceController {
     private final AmbulanceService ambulanceService;

@@ -3,6 +3,7 @@ package com.ambulance.emergency.service;
 import com.ambulance.common.enums.EmergencyStatus;
 import com.ambulance.emergency.dto.CreateEmergencyRequest;
 import com.ambulance.emergency.dto.EmergencyResponse;
+import com.ambulance.emergency.dto.UpdateEmergencyRequest;
 import com.ambulance.emergency.entity.EmergencyCase;
 import com.ambulance.common.exception.BusinessException;
 import com.ambulance.emergency.repository.EmergencyRepository;
@@ -56,21 +57,21 @@ public class EmergencyService {
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DRIVER')")
     public EmergencyResponse getEmergencyById(Long id) {
         EmergencyCase emergency = findEmergencyById(id);
         return mapToResponse(emergency);
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Page<EmergencyResponse> getAllEmergencies(Pageable pageable) {
         return emergencyRepository.findAll(pageable)
                 .map(this::mapToResponse);
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('DRIVER')")
+    @PreAuthorize("hasAuthority('DRIVER')")
     public List<EmergencyResponse> getEmergenciesForAmbulance(Long ambulanceId) {
         if (ambulanceId == null) {
             throw new BusinessException("Ambulance ID cannot be null", "INVALID_AMBULANCE_ID");
@@ -143,5 +144,45 @@ public class EmergencyService {
         response.setCreatedAt(emergency.getCreatedAt());
         response.setUpdatedAt(emergency.getUpdatedAt());
         return response;
+    }
+
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public List<EmergencyResponse> getAllEmergencies() {
+        return emergencyRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public EmergencyResponse updateEmergency(Long id, UpdateEmergencyRequest request) {
+        EmergencyCase emergency = findEmergencyById(id);
+
+        if (request.getStatus() != null) {
+            emergency.setStatus(request.getStatus());
+        }
+        if (request.getAssignedAmbulanceId() != null) {
+            emergency.setAssignedAmbulanceId(request.getAssignedAmbulanceId());
+        }
+        if (request.getAssignedHospitalId() != null) {
+            emergency.setAssignedHospitalId(request.getAssignedHospitalId());
+        }
+        if (request.getPatientName() != null) {
+            emergency.setPatientName(request.getPatientName());
+        }
+        if (request.getContactNumber() != null) {
+            emergency.setContactNumber(request.getContactNumber());
+        }
+        if (request.getPickupLatitude() != null) {
+            emergency.setPickupLatitude(request.getPickupLatitude());
+        }
+        if (request.getPickupLongitude() != null) {
+            emergency.setPickupLongitude(request.getPickupLongitude());
+        }
+
+        emergency.setUpdatedAt(LocalDateTime.now());
+
+        return mapToResponse(emergencyRepository.save(emergency));
     }
 }

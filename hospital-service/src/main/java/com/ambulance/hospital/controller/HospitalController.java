@@ -13,20 +13,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/hospitals")
+@RequestMapping("/hospitals")
 @RequiredArgsConstructor
 public class HospitalController {
     private final HospitalService hospitalService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<BaseResponse<HospitalResponse>> createHospital(
             @Valid @RequestBody HospitalRequest request) {
         return ResponseEntity.ok(BaseResponse.success(hospitalService.createHospital(request)));
     }
 
     @PutMapping("/{id}/capacity")
-    @PreAuthorize("hasAnyRole('ADMIN', 'HOSPITAL_STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'HOSPITAL_STAFF')")
     public ResponseEntity<BaseResponse<HospitalResponse>> updateCapacity(
             @PathVariable Long id,
             @RequestParam Integer availableBeds,
@@ -36,6 +36,7 @@ public class HospitalController {
     }
 
     @GetMapping("/available")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<BaseResponse<List<HospitalResponse>>> getAvailableHospitals() {
         return ResponseEntity.ok(BaseResponse.success(hospitalService.getAvailableHospitals()));
     }

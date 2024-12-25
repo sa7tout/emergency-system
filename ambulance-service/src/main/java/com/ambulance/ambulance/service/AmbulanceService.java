@@ -102,6 +102,31 @@ public class AmbulanceService {
     public AmbulanceResponse updateAmbulance(Long id, AmbulanceUpdateRequest request) {
         AmbulanceEntity ambulance = getAmbulanceEntity(id);
 
+        if (request.getVehicleNumber() != null &&
+                !request.getVehicleNumber().equals(ambulance.getVehicleNumber())) {
+            boolean duplicateExists = ambulanceRepository
+                    .findAll()
+                    .stream()
+                    .anyMatch(a -> a.getVehicleNumber().equals(request.getVehicleNumber()) && !a.getId().equals(id));
+
+            if (duplicateExists) {
+                throw new BusinessException("Vehicle number already exists", "DUPLICATE_VEHICLE");
+            }
+            ambulance.setVehicleNumber(request.getVehicleNumber());
+        }
+
+        if (request.getModel() != null) {
+            ambulance.setModel(request.getModel());
+        }
+        if (request.getYear() != null) {
+            ambulance.setYear(request.getYear());
+        }
+        if (request.getEquipmentDetails() != null) {
+            ambulance.setEquipmentDetails(request.getEquipmentDetails());
+        }
+        if (request.getDeviceId() != null) {
+            ambulance.setDeviceId(request.getDeviceId());
+        }
         if (request.getStatus() != null) {
             ambulance.setStatus(request.getStatus());
         }
