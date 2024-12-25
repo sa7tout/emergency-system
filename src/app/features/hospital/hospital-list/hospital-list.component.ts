@@ -2,122 +2,179 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { HospitalService, HospitalResponse } from '../hospital.service';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { HospitalService } from '../hospital.service';
+import { HospitalResponse } from '../models/hospital.model';
+import { AddEditHospitalDialog } from '../dialogs/add-edit-hospital.dialog';
+import { SnackbarService } from 'src/app/shared/services/snackbar.service';
 
 @Component({
   selector: 'app-hospital-list',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatProgressBarModule],
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatButtonModule,
+    MatCardModule,
+    MatProgressBarModule,
+    MatDialogModule,
+    MatIconModule
+  ],
   template: `
-    <div class="hospital-container">
-      <div class="header">
-        <h2>Hospitals</h2>
-        <div class="capacity-overview">
-          <div class="overview-card">
-            <span class="label">Total Hospitals</span>
-            <span class="value">{{hospitals.length}}</span>
-          </div>
-          <div class="overview-card">
-            <span class="label">Total Available Beds</span>
-            <span class="value">{{getTotalAvailableBeds()}}</span>
-          </div>
-          <div class="overview-card">
-            <span class="label">Average Occupancy</span>
-            <span class="value">{{getAverageOccupancy()}}%</span>
-          </div>
+    <div class="container mx-auto p-6">
+      <div class="relative w-full mb-6">
+        <h1 class="text-2xl font-bold">Hospital Management</h1>
+        <div class="absolute top-0 right-0">
+          <button mat-raised-button color="primary" (click)="addHospital()">
+            <mat-icon>add</mat-icon>
+            Add Hospital
+          </button>
         </div>
       </div>
 
-      <mat-table [dataSource]="hospitals" class="mat-elevation-z8">
-        <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="capacity">
-          <mat-header-cell *matHeaderCellDef>Capacity</mat-header-cell>
-          <mat-cell *matCellDef="let element">
-            <div class="capacity-info">
-              <mat-progress-bar
-                [value]="getOccupancyPercentage(element)"
-                [color]="getCapacityColor(element)">
-              </mat-progress-bar>
-              <span>{{element.availableBeds}}/{{element.totalBeds}} beds</span>
+      <div class="flex flex-nowrap justify-between gap-4 mb-6">
+        <mat-card class="stat-card">
+          <mat-card-content class="stat-card-content">
+            <div class="flex items-center gap-3">
+              <mat-icon class="text-gray-600">local_hospital</mat-icon>
+              <div>
+                <div class="text-sm text-gray-600">Total Hospitals</div>
+                <div class="text-2xl font-bold">{{hospitals.length}}</div>
+              </div>
             </div>
-          </mat-cell>
-        </ng-container>
+          </mat-card-content>
+        </mat-card>
 
-        <ng-container matColumnDef="emergencyLoad">
-          <mat-header-cell *matHeaderCellDef>Emergency Load</mat-header-cell>
-          <mat-cell *matCellDef="let element">
-            {{element.currentEmergencyLoad}}/{{element.emergencyCapacity}}
-          </mat-cell>
-        </ng-container>
+        <mat-card class="stat-card">
+          <mat-card-content class="stat-card-content">
+            <div class="flex items-center gap-3">
+              <mat-icon class="text-green-600">bed</mat-icon>
+              <div>
+                <div class="text-sm text-gray-600">Available Beds</div>
+                <div class="text-2xl font-bold text-green-600">{{getTotalAvailableBeds()}}</div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
 
-        <ng-container matColumnDef="status">
-          <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
-          <mat-cell *matCellDef="let element">
-            <span [class]="getStatusClass(element)">
-              {{element.isActive ? 'Active' : 'Inactive'}}
-            </span>
-          </mat-cell>
-        </ng-container>
+        <mat-card class="stat-card">
+          <mat-card-content class="stat-card-content">
+            <div class="flex items-center gap-3">
+              <mat-icon class="text-amber-600">trending_up</mat-icon>
+              <div>
+                <div class="text-sm text-gray-600">Average Occupancy</div>
+                <div class="text-2xl font-bold text-amber-600">{{getAverageOccupancy()}}%</div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
 
-        <ng-container matColumnDef="actions">
-          <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
-          <mat-cell *matCellDef="let element">
-            <button mat-button color="primary" (click)="updateCapacity(element)">Update</button>
-            <button mat-button color="accent" (click)="viewDetails(element)">Details</button>
-          </mat-cell>
-        </ng-container>
+      <mat-card>
+        <mat-card-content>
+          <table mat-table [dataSource]="hospitals" class="w-full">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell *matCellDef="let hospital">{{hospital.name}}</td>
+            </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      </mat-table>
+            <ng-container matColumnDef="capacity">
+              <th mat-header-cell *matHeaderCellDef>Capacity</th>
+              <td mat-cell *matCellDef="let hospital">
+                <div class="capacity-info">
+                  <mat-progress-bar
+                    [value]="getOccupancyPercentage(hospital)"
+                    [color]="getCapacityColor(hospital)">
+                  </mat-progress-bar>
+                  <span class="text-sm">{{hospital.availableBeds}}/{{hospital.totalBeds}} beds</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="emergencyLoad">
+              <th mat-header-cell *matHeaderCellDef>Emergency Load</th>
+              <td mat-cell *matCellDef="let hospital">
+                {{hospital.currentEmergencyLoad}}/{{hospital.emergencyCapacity}}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let hospital">
+                <span [ngClass]="getStatusClass(hospital)">
+                  {{hospital.isActive ? 'Active' : 'Inactive'}}
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let hospital">
+                <button mat-icon-button color="primary" (click)="editHospital(hospital)" matTooltip="Edit">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
     </div>
   `,
   styles: [`
-    .hospital-container {
-      padding: 20px;
-    }
-    .header {
-      margin-bottom: 20px;
-    }
-    .capacity-overview {
-      display: flex;
-      gap: 20px;
-      margin-top: 20px;
-    }
-    .overview-card {
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    .stat-card {
       flex: 1;
+      min-width: 200px;
+      max-width: 300px;
     }
+
     .capacity-info {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
       width: 200px;
     }
+
     .active {
       color: #4caf50;
+      font-weight: 500;
     }
+
     .inactive {
       color: #f44336;
+      font-weight: 500;
     }
-    mat-table {
-      width: 100%;
-    }
+    .flex.flex-nowrap {
+        display: flex;
+        flex-wrap: nowrap; /* Prevent wrapping */
+        overflow-x: auto; /* Enable horizontal scrolling if necessary */
+        gap: 16px; /* Maintain spacing between cards */
+      }
+
+      .stat-card {
+        flex: 0 0 auto; /* Prevent cards from shrinking or growing unevenly */
+        min-width: 250px; /* Ensure a consistent minimum size */
+        max-width: 300px; /* Optional: Set a consistent maximum size */
+      }
+
+      .stat-card-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
   `]
 })
 export class HospitalListComponent implements OnInit {
   hospitals: HospitalResponse[] = [];
   displayedColumns = ['name', 'capacity', 'emergencyLoad', 'status', 'actions'];
 
-  constructor(private hospitalService: HospitalService) {}
+  constructor(
+    private hospitalService: HospitalService,
+    private dialog: MatDialog,
+    private snackbar: SnackbarService
+  ) {}
 
   ngOnInit() {
     this.loadHospitals();
@@ -125,8 +182,14 @@ export class HospitalListComponent implements OnInit {
 
   loadHospitals() {
     this.hospitalService.getHospitals().subscribe({
-      next: (data) => this.hospitals = data,
-      error: (error) => console.error('Error loading hospitals:', error)
+      next: (response) => {
+        this.hospitals = Array.isArray(response) ? response : [];
+      },
+      error: (error) => {
+        console.error('Error loading hospitals:', error);
+        this.snackbar.showSnackbar('Failed to load hospitals', 'Close');
+        this.hospitals = [];
+      }
     });
   }
 
@@ -135,9 +198,9 @@ export class HospitalListComponent implements OnInit {
   }
 
   getAverageOccupancy() {
-    const total = this.hospitals.reduce((sum, hospital) => {
-      return sum + this.getOccupancyPercentage(hospital);
-    }, 0);
+    if (!this.hospitals.length) return 0;
+    const total = this.hospitals.reduce((sum, hospital) =>
+      sum + this.getOccupancyPercentage(hospital), 0);
     return Math.round(total / this.hospitals.length);
   }
 
@@ -154,11 +217,28 @@ export class HospitalListComponent implements OnInit {
     return hospital.isActive ? 'active' : 'inactive';
   }
 
-  updateCapacity(hospital: HospitalResponse) {
-    // Implement update capacity dialog
+  addHospital() {
+    const dialogRef = this.dialog.open(AddEditHospitalDialog, {
+      width: '600px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadHospitals();
+      }
+    });
   }
 
-  viewDetails(hospital: HospitalResponse) {
-    // Implement view details
+  editHospital(hospital: HospitalResponse) {
+    const dialogRef = this.dialog.open(AddEditHospitalDialog, {
+      width: '600px',
+      data: hospital
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadHospitals();
+      }
+    });
   }
 }

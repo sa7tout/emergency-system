@@ -17,6 +17,8 @@ export interface CreateEmergencyRequest {
   pickupLongitude: number;
   patientName: string;
   contactNumber?: string;
+  assignedAmbulanceId: number;
+  assignedHospitalId: number;
 }
 
 export enum EmergencyStatus {

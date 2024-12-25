@@ -13,6 +13,8 @@ import { map } from 'rxjs/operators';
 
 import { EmergencyDetailsDialog } from '../dialogs/emergency-details.dialog';
 import { EmergencyEditDialog } from '../dialogs/emergency-edit.dialog';
+import { CreateEmergencyDialog } from '../dialogs/create-emergency.dialog';
+
 
 @Component({
   selector: 'app-emergency-list',
@@ -72,6 +74,19 @@ export class EmergencyListComponent {
     this.dialog.open(EmergencyDetailsDialog, {
       width: '800px',
       data: emergency
+    });
+  }
+
+  createEmergency() {
+    const dialogRef = this.dialog.open(CreateEmergencyDialog, {
+      width: '500px',
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.emergencyService.refreshEmergencies();
+      }
     });
   }
 

@@ -30,6 +30,13 @@
       font-weight: bold;
       color: #333;
     }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
   }
 
   mat-table {

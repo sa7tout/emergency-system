@@ -1,5 +1,17 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../core/services/api.service';
+import { Observable, map } from 'rxjs';
+
+export interface HospitalRequest {
+ name: string;
+ address: string;
+ latitude: number;
+ longitude: number;
+ totalBeds: number;
+ emergencyCapacity: number;
+ specialties?: string;
+ contactNumber: string;
+}
 
 export interface HospitalResponse {
  id: number;
@@ -16,17 +28,33 @@ export interface HospitalResponse {
  contactNumber: string;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+ providedIn: 'root'
+})
 export class HospitalService {
  constructor(private apiService: ApiService) {}
 
- getHospitals() {
-   return this.apiService.get<HospitalResponse[]>('hospital', '/api/hospitals/available');
+ getHospitals(): Observable<HospitalResponse[]> {
+   return this.apiService
+     .get<HospitalResponse[]>('hospital', '/hospitals/available')
+     .pipe(
+       map(response => Array.isArray(response) ? response : [])
+     );
  }
 
+ createHospital(data: HospitalRequest): Observable<HospitalResponse> {
+   return this.apiService.post<HospitalResponse>('hospital', '/hospitals', data);
+ }
 
- updateCapacity(id: number, availableBeds: number, currentLoad: number) {
-   const queryParams = `availableBeds=${availableBeds}&currentLoad=${currentLoad}`;
-   return this.apiService.put<HospitalResponse>('hospital', `/api/hospitals/${id}/capacity?${queryParams}`, {});
+ updateHospital(id: number, data: HospitalRequest): Observable<HospitalResponse> {
+   return this.apiService.put<HospitalResponse>('hospital', `/hospitals/${id}`, data);
+ }
+
+ deleteHospital(id: number): Observable<void> {
+   return this.apiService.delete<void>('hospital', `/hospitals/${id}`);
+ }
+
+ getHospitalById(id: number): Observable<HospitalResponse> {
+   return this.apiService.get<HospitalResponse>('hospital', `/hospitals/${id}`);
  }
 }

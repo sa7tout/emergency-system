@@ -14,7 +14,7 @@
     "secure": false,
     "changeOrigin": true
   },
-  "/emergency/api/v1/api/hospitals": {
+  "/emergency/api/v1/hospitals": {
     "target": "http://localhost:8094",
     "secure": false,
     "changeOrigin": true
