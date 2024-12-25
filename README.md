@@ -1,4 +1,4 @@
-# ambulance_tracker
+# Smart Emergency Mobile App
 
 A new Flutter project.
 
