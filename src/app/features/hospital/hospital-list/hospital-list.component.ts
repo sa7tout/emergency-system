@@ -183,6 +183,7 @@ export class HospitalListComponent implements OnInit {
   loadHospitals() {
     this.hospitalService.getHospitals().subscribe({
       next: (response) => {
+        console.log('API Response:', response);
         this.hospitals = Array.isArray(response) ? response : [];
       },
       error: (error) => {
@@ -192,6 +193,7 @@ export class HospitalListComponent implements OnInit {
       }
     });
   }
+
 
   getTotalAvailableBeds() {
     return this.hospitals.reduce((sum, hospital) => sum + hospital.availableBeds, 0);

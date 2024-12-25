@@ -36,11 +36,12 @@ export class HospitalService {
 
  getHospitals(): Observable<HospitalResponse[]> {
    return this.apiService
-     .get<HospitalResponse[]>('hospital', '/hospitals/available')
+     .get<{ success: boolean; message: string; data: HospitalResponse[] }>('hospital', '/hospitals/available')
      .pipe(
-       map(response => Array.isArray(response) ? response : [])
+       map(response => (Array.isArray(response.data) ? response.data : []))
      );
  }
+
 
  createHospital(data: HospitalRequest): Observable<HospitalResponse> {
    return this.apiService.post<HospitalResponse>('hospital', '/hospitals', data);
