@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatMenuModule } from '@angular/material/menu';
 import { AuthService } from '../../../core/services/auth.service';
+import { ThemeService } from '../../../core/services/theme.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -271,8 +272,13 @@ import { Router } from '@angular/router';
 export class DashboardComponent {
   constructor(
     private authService: AuthService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private themeService: ThemeService
+  ){
+    this.themeService.isDarkTheme$.subscribe(isDark => {
+        document.body.classList.toggle('dark-theme', isDark);
+      });
+    }
 
   logout() {
     this.authService.logout();

@@ -82,3 +82,44 @@ html, body {
    color: white;
  }
 }
+
+
+.dark-theme {
+  // Global
+  background-color: #1e1e1e;
+  color: #ffffff;
+
+  // Toolbar
+  .toolbar {
+    background-color: #1e1e1e !important;
+  }
+
+  // Sidenav & Content
+  .sidenav {
+    background-color: #2d2d2d !important;
+    border-color: #3d3d3d !important;
+  }
+
+  .sidenav-container {
+    background-color: #1e1e1e !important;
+  }
+
+  .content {
+    background-color: #1e1e1e !important;
+  }
+
+  // Cards and Elements
+  .mat-mdc-card {
+    background-color: #2d2d2d !important;
+    color: #ffffff !important;
+  }
+
+  .bg-gray-50 {
+    background-color: #333333 !important;
+  }
+
+  .text-gray-500,
+  .text-gray-600 {
+    color: #9e9e9e !important;
+  }
+}
