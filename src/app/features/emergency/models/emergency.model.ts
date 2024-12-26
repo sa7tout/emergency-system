@@ -1,4 +1,3 @@
-// src/app/features/emergency/models/emergency.model.ts
 export interface EmergencyResponse {
   id: number;
   pickupLatitude: number;

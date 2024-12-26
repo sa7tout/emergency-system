@@ -8,7 +8,26 @@ interface AuthResponse {
   data: {
     token: string;
     username: string;
+    email: string;
     roles: string[];
+  };
+}
+
+interface EmployeeRegistrationRequest {
+  employeeId: string;
+  fullName: string;
+  pin: string;
+  role: string;
+}
+
+interface EmployeeResponse {
+  success: boolean;
+  message: string;
+  data: {
+    token: string;
+    employeeId: string;
+    fullName: string;
+    role: string;
   };
 }
 
@@ -63,5 +82,29 @@ export class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem('token');
+  }
+
+  registerEmployee(data: EmployeeRegistrationRequest): Observable<EmployeeResponse> {
+   const token = this.getToken();
+   const headers = {
+     'Content-Type': 'application/json',
+     'Authorization': `Bearer ${token}`
+   };
+
+   return this.http.post<EmployeeResponse>(
+     `${this.baseUrl}/employee/register`,
+     data,
+     { headers }
+   ).pipe(
+     catchError(error => {
+       if (error.status === 400) {
+         throw new Error(error.error?.message || 'Invalid employee data');
+       } else if (error.status === 403) {
+         throw new Error('Not authorized to register employees');
+       } else {
+         throw new Error('Failed to register employee');
+       }
+     })
+   );
   }
 }

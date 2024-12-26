@@ -12,6 +12,11 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       {
+        path: '',
+        loadComponent: () => import('./features/overview/overview.component')
+          .then(m => m.OverviewComponent)
+      },
+      {
         path: 'emergencies',
         loadChildren: () => import('./features/emergency/emergency.routes').then(m => m.EMERGENCY_ROUTES)
       },
@@ -23,7 +28,11 @@ export const routes: Routes = [
         path: 'hospitals',
         loadChildren: () => import('./features/hospital/hospital.routes').then(m => m.HOSPITAL_ROUTES)
       },
-      { path: '', redirectTo: 'emergencies', pathMatch: 'full' }
+      {
+        path: 'settings',
+        loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent)
+      },
+      { path: '', redirectTo: 'overview', pathMatch: 'full' }
     ]
   },
   { path: '', redirectTo: '/login', pathMatch: 'full' }
