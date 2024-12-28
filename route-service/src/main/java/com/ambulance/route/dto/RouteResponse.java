@@ -14,7 +14,9 @@ public class RouteResponse {
     private Double endLatitude;
     private Double endLongitude;
     private Double estimatedDuration;
+    private Double actualDuration;
     private String encodedPath;
+    private LocalDateTime updatedAt;
     private LocalDateTime createdAt;
     private String status;
 }

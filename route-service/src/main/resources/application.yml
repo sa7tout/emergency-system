@@ -37,3 +37,7 @@ logging:
     com.ambulance: DEBUG
     org.springframework.web: DEBUG
     org.springframework.security: DEBUG
+
+routing:
+  api:
+    url: https://router.project-osrm.org
